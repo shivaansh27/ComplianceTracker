@@ -1,6 +1,6 @@
 import TaskCard from './TaskCard';
 
-export default function TaskList({ tasks, onStatusChange }) {
+export default function TaskList({ tasks, onStatusChange, onDeleteTask, deletingTaskId }) {
   if (tasks.length === 0) {
     return (
       <div className="bg-white border border-gray-200 rounded-xl px-5 py-10 text-center">
@@ -12,7 +12,13 @@ export default function TaskList({ tasks, onStatusChange }) {
   return (
     <div className="space-y-3">
       {tasks.map((task) => (
-        <TaskCard key={task._id} task={task} onStatusChange={onStatusChange} />
+        <TaskCard
+          key={task._id}
+          task={task}
+          onStatusChange={onStatusChange}
+          onDeleteTask={onDeleteTask}
+          deletingTaskId={deletingTaskId}
+        />
       ))}
     </div>
   );

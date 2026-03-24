@@ -13,6 +13,7 @@ export default function ClientList() {
     entity_type: "Pvt Ltd",
   });
   const [submitting, setSubmitting] = useState(false);
+  const [deletingClientId, setDeletingClientId] = useState("");
   const navigate = useNavigate();
 
   const fetchClients = async () => {
@@ -53,6 +54,28 @@ export default function ClientList() {
       );
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleDeleteClient = async (clientId, companyName) => {
+    const confirmed = window.confirm(
+      `Delete client "${companyName}"? This will also remove all tasks for this client.`,
+    );
+    if (!confirmed) return;
+
+    setError("");
+    setDeletingClientId(clientId);
+    try {
+      await api.delete(`/clients/${clientId}`);
+      setClients((prev) => prev.filter((client) => client._id !== clientId));
+    } catch (err) {
+      setError(
+        err.userMessage ||
+          err.response?.data?.message ||
+          "Failed to delete client",
+      );
+    } finally {
+      setDeletingClientId("");
     }
   };
 
@@ -165,19 +188,33 @@ export default function ClientList() {
                     {client.entity_type} · {client.country}
                   </p>
                 </div>
-                <svg
-                  className="w-4 h-4 text-gray-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteClient(client._id, client.company_name);
+                    }}
+                    disabled={deletingClientId === client._id}
+                    className="px-2.5 py-1.5 text-xs rounded-lg border border-red-200 text-red-600 hover:bg-red-50 disabled:opacity-50"
+                  >
+                    {deletingClientId === client._id ? "Deleting..." : "Delete"}
+                  </button>
+
+                  <svg
+                    className="w-4 h-4 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                </div>
               </div>
             ))}
           </div>

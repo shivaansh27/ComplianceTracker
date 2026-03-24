@@ -10,7 +10,7 @@ const statusStyles = {
   Completed: 'bg-green-100 text-green-700',
 };
 
-export default function TaskCard({ task, onStatusChange }) {
+export default function TaskCard({ task, onStatusChange, onDeleteTask, deletingTaskId }) {
   const isOverdue =
     task.status !== 'Completed' && new Date(task.due_date) < new Date();
 
@@ -53,15 +53,26 @@ export default function TaskCard({ task, onStatusChange }) {
         )}
       </div>
 
-      <select
-        className="border border-gray-200 rounded-lg px-2 py-1.5 text-xs outline-none focus:ring-2 focus:ring-indigo-300 bg-white shrink-0"
-        value={task.status}
-        onChange={(e) => onStatusChange(task._id, e.target.value)}
-      >
-        <option value="Pending">Pending</option>
-        <option value="In Progress">In Progress</option>
-        <option value="Completed">Completed</option>
-      </select>
+      <div className="flex items-center gap-2 shrink-0">
+        <select
+          className="border border-gray-200 rounded-lg px-2 py-1.5 text-xs outline-none focus:ring-2 focus:ring-indigo-300 bg-white"
+          value={task.status}
+          onChange={(e) => onStatusChange(task._id, e.target.value)}
+        >
+          <option value="Pending">Pending</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Completed">Completed</option>
+        </select>
+
+        <button
+          type="button"
+          onClick={() => onDeleteTask(task._id, task.title)}
+          disabled={deletingTaskId === task._id}
+          className="px-2.5 py-1.5 text-xs rounded-lg border border-red-200 text-red-600 hover:bg-red-50 disabled:opacity-50"
+        >
+          {deletingTaskId === task._id ? 'Deleting...' : 'Delete'}
+        </button>
+      </div>
     </div>
   );
 }

@@ -1,5 +1,6 @@
 const Client = require("../models/Client");
 const mongoose = require("mongoose");
+const Task = require("../models/Task");
 
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
@@ -86,6 +87,9 @@ const deleteClient = async (req, res) => {
         .status(404)
         .json({ success: false, message: "Client not found" });
     }
+
+    await Task.deleteMany({ client_id: req.params.id });
+
     res.json({ success: true, message: "Client deleted" });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });

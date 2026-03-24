@@ -13,6 +13,7 @@ export default function Dashboard() {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [deletingTaskId, setDeletingTaskId] = useState("");
   const [filters, setFilters] = useState({ status: "", category: "" });
 
   const fetchAll = async () => {
@@ -48,6 +49,26 @@ export default function Dashboard() {
       fetchAll();
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  const handleDeleteTask = async (taskId, title) => {
+    const confirmed = window.confirm(`Delete task "${title}"?`);
+    if (!confirmed) return;
+
+    setError("");
+    setDeletingTaskId(taskId);
+    try {
+      await api.delete(`/tasks/${taskId}`);
+      await fetchAll();
+    } catch (err) {
+      setError(
+        err.userMessage ||
+          err.response?.data?.message ||
+          "Failed to delete task",
+      );
+    } finally {
+      setDeletingTaskId("");
     }
   };
 
@@ -130,7 +151,12 @@ export default function Dashboard() {
           </span>
         </div>
 
-        <TaskList tasks={tasks} onStatusChange={handleStatusChange} />
+        <TaskList
+          tasks={tasks}
+          onStatusChange={handleStatusChange}
+          onDeleteTask={handleDeleteTask}
+          deletingTaskId={deletingTaskId}
+        />
       </div>
     </div>
   );
