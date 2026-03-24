@@ -1,4 +1,7 @@
+const clientRoute = require('./routes/clientRoute');
+
 require('dotenv').config();
+
 const express = require('express');
 const cors = require('cors');
 const connectDB = require('./config/db');
@@ -9,6 +12,7 @@ connectDB();
 
 app.use(cors());
 app.use(express.json());
+app.use('/api/clients', clientRoute);
 
 app.get('/', (req, res) => {
   res.json({ message: 'Compliance Tracker API running' });
