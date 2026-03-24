@@ -53,7 +53,6 @@ export default function TaskCard({ task, onStatusChange }) {
         )}
       </div>
 
-      {/* Status Updater */}
       <select
         className="border border-gray-200 rounded-lg px-2 py-1.5 text-xs outline-none focus:ring-2 focus:ring-indigo-300 bg-white shrink-0"
         value={task.status}
